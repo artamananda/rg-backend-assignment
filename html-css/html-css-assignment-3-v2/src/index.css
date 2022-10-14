@@ -1,0 +1,90 @@
+body{
+    margin: auto; 
+}
+
+@media only screen and (min-width: 320px) {
+    body {
+      background-color: white;
+    }
+}
+
+@media only screen and (min-width: 1080px) {
+    body {
+      background-color: white;
+    }
+}
+
+header{
+    text-align: center;
+    padding: 20px;
+    background-color: #256D85;
+    color: white;
+}
+
+header h1{
+    margin: 0;
+    padding: 0;
+}
+
+header p{
+    margin-top: 0;
+}
+
+header hr{
+    border: 1px solid white;
+}
+
+h2{
+    margin: 0 5vw;
+    padding-bottom: 5vh;
+}
+
+.profile-image{
+    border-radius: 50%;
+    width: 20vw;
+    display: grid;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto; /* menentukan template column dengan lebar yang sama */
+    gap: 10px;
+    padding: 10px;
+}
+
+.grid-item {
+    padding: 20px;
+}
+
+.description{
+    font-size: 1.5rem;
+    text-align: justify;
+}
+
+.social-media a{
+    color: white;
+    padding-right: 10px;
+}
+
+.profile{
+    background-color: #256D85;
+    padding: 5vh 0;
+    color: white;
+}
+
+.organization-history{
+    padding: 5vh 0;
+}
+
+.contact{
+    padding: 5vh 0;
+}
+
+.brad-10{
+    border-radius: 10px;
+    border: 1px solid black;
+}
+
+.margin-content{
+    margin: 0 7vw;
+}
