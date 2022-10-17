@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/google/uuid"
 
 	"a21hc3NpZ25tZW50/db"
 	"a21hc3NpZ25tZW50/middleware"
@@ -34,6 +37,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		} else {
 			success.Username = payload.Username
 			success.Message = "Register Success"
+			db.Users[payload.Username] = payload.Password
 		}
 
 	} else {
@@ -64,7 +68,72 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	e := model.ErrorResponse{}
+	success := model.SuccessResponse{}
+	code := 200
+	if r.Method == "POST" {
+		decoder := json.NewDecoder(r.Body)
+		payload := struct {
+			Username string `json:"username"`
+			Password string `json:"password"`
+		}{}
 
+		if err := decoder.Decode(&payload); err != nil {
+			e.Error = "Internal Server Error"
+			code = 400
+
+		} else if payload.Username == "" || payload.Password == "" {
+			e.Error = "Username or Password empty"
+			code = 400
+		} else if _, ok := db.Users[payload.Username]; !ok {
+			e.Error = "Wrong User or Password!"
+			code = 401
+		} else {
+			success.Username = payload.Username
+			success.Message = "Login Success"
+			cookieName := "session_token"
+			c := &http.Cookie{}
+			if storedCookie, _ := r.Cookie(cookieName); storedCookie != nil {
+				c = storedCookie
+			}
+			if c.Value == "" {
+				c = &http.Cookie{}
+				c.Name = cookieName
+				c.Value = uuid.NewString()
+				c.Expires = time.Now().Add(5 * time.Hour)
+				http.SetCookie(w, c)
+			}
+
+			db.Sessions[c.Name] = model.Session{
+				Username: payload.Username,
+				Expiry:   c.Expires,
+			}
+		}
+
+	} else {
+		e.Error = "Method is not allowed!"
+		code = 405
+	}
+
+	if e.Error != "" {
+		jsonInBytes, err := json.Marshal(e)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(code)
+		w.Write(jsonInBytes)
+	} else {
+		jsonInBytes, err := json.Marshal(success)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(code)
+		w.Write(jsonInBytes)
+	}
 }
 
 func AddToDo(w http.ResponseWriter, r *http.Request) {
