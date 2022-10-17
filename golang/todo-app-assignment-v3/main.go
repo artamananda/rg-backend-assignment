@@ -11,7 +11,8 @@ import (
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	message := map[string]string{}
+	e := model.ErrorResponse{}
+	success := model.SuccessResponse{}
 	code := 200
 	if r.Method == "POST" {
 		decoder := json.NewDecoder(r.Body)
@@ -21,34 +22,45 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		}{}
 
 		if err := decoder.Decode(&payload); err != nil {
-			message["error"] = "Internal Server Error"
+			e.Error = "Internal Server Error"
 			code = 400
 
 		} else if payload.Username == "" || payload.Password == "" {
-			message["error"] = "Username or Password empty"
+			e.Error = "Username or Password empty"
 			code = 400
 		} else if _, ok := db.Users[payload.Username]; ok {
-			message["error"] = "Username already exist"
+			e.Error = "Username already exist"
 			code = 409
 		} else {
-			message["username"] = payload.Username
-			message["message"] = "Register Success"
+			success.Username = payload.Username
+			success.Message = "Register Success"
 		}
 
 	} else {
-		message["error"] = "Method is not allowed!"
+		e.Error = "Method is not allowed!"
 		code = 405
 	}
 
-	jsonInBytes, err := json.Marshal(message)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if e.Error != "" {
+		jsonInBytes, err := json.Marshal(e)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(code)
+		w.Write(jsonInBytes)
+	} else {
+		jsonInBytes, err := json.Marshal(success)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(code)
+		w.Write(jsonInBytes)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(jsonInBytes)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
