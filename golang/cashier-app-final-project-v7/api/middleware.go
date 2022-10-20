@@ -9,7 +9,23 @@ import (
 
 func (api *API) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sessionToken := "" // TODO: replace this
+		storedCookie, _ := r.Cookie("session_token")
+		if storedCookie == nil {
+			e := model.ErrorResponse{}
+			code := 401
+			e.Error = "http: named cookie not present"
+			jsonInBytes, err := json.Marshal(e)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(code)
+			w.Write(jsonInBytes)
+			return
+		}
+
+		sessionToken := storedCookie.Value
 
 		sessionFound, err := api.sessionsRepo.CheckExpireToken(sessionToken)
 		if err != nil {
@@ -25,14 +41,40 @@ func (api *API) Auth(next http.Handler) http.Handler {
 
 func (api *API) Get(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO: answer here
+		if r.Method != "GET" {
+			e := model.ErrorResponse{}
+			e.Error = "Method is not allowed!"
+			code := 405
+			jsonInBytes, err := json.Marshal(e)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(code)
+			w.Write(jsonInBytes)
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }
 
 func (api *API) Post(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO: answer here
+		if r.Method != "POST" {
+			e := model.ErrorResponse{}
+			e.Error = "Method is not allowed!"
+			code := 405
+			jsonInBytes, err := json.Marshal(e)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(code)
+			w.Write(jsonInBytes)
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }

@@ -3,6 +3,7 @@ package repository
 import (
 	"a21hc3NpZ25tZW50/db"
 	"a21hc3NpZ25tZW50/model"
+	"encoding/json"
 )
 
 type ProductRepository struct {
@@ -14,7 +15,10 @@ func NewProductRepository(db db.DB) ProductRepository {
 }
 
 func (u *ProductRepository) ReadProducts() ([]model.Product, error) {
-	return []model.Product{}, nil // TODO: replace this
+	var jsonData []model.Product
+	b, _ := u.db.Load("products")
+	err := json.Unmarshal(b, &jsonData)
+	return jsonData, err // TODO: replace this
 }
 
 func (u *ProductRepository) ResetProducts() error {

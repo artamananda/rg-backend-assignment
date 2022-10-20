@@ -19,7 +19,7 @@ func (api *API) dashboardView(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data model.Dashboard
-	listProducts, err := api.products.ReadProducts()
+	listProducts, _ := api.products.ReadProducts()
 
 	cart, err := api.cartsRepo.CartUserExist(username)
 	if err != nil {

@@ -1,10 +1,13 @@
 package api
 
 import (
+	"a21hc3NpZ25tZW50/model"
 	repo "a21hc3NpZ25tZW50/repository"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"path"
+	"text/template"
 )
 
 type API struct {
@@ -21,7 +24,17 @@ type Page struct {
 
 func (p Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	filepath := path.Join("views", p.File)
-	// TODO: answer here
+	tmpl, err := template.ParseFiles(filepath)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(model.ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func NewAPI(usersRepo repo.UserRepository, sessionsRepo repo.SessionsRepository, products repo.ProductRepository, cartsRepo repo.CartRepository) API {
@@ -40,7 +53,10 @@ func NewAPI(usersRepo repo.UserRepository, sessionsRepo repo.SessionsRepository,
 	// Please create routing for:
 	// - Register page with endpoint `/page/register`, GET method and render `register.html` file on views folder
 	// - Login page with endpoint `/page/login`, GET method and render `login.html` file on views folder
-	// TODO: answer here
+	register := Page{File: "register.html"}
+	login := Page{File: "login.html"}
+	mux.Handle("/page/register", api.Get(register))
+	mux.Handle("/page/login", api.Get(login))
 
 	mux.Handle("/user/register", api.Post(http.HandlerFunc(api.Register)))
 	mux.Handle("/user/login", api.Post(http.HandlerFunc(api.Login)))
@@ -50,7 +66,7 @@ func NewAPI(usersRepo repo.UserRepository, sessionsRepo repo.SessionsRepository,
 	mux.Handle("/user/img/update-profile", api.Post(api.Auth(http.HandlerFunc(api.ImgProfileUpdate))))
 
 	// Please create routing for endpoint `/cart/add` with POST method, Authentication and handle api.AddCart
-	// TODO: answer here
+	mux.Handle("/cart/add", api.Post(api.Auth(http.HandlerFunc(api.AddCart))))
 
 	return api
 }

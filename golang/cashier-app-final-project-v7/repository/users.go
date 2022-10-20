@@ -31,7 +31,18 @@ func (u *UserRepository) ReadUser() ([]model.Credentials, error) {
 }
 
 func (u *UserRepository) AddUser(creds model.Credentials) error {
-	return nil // TODO: replace this
+	listCreds := []model.Credentials{}
+	listCreds = append(listCreds, creds)
+	jsonData, err := json.Marshal(listCreds)
+	if err != nil {
+		panic(err)
+	}
+	err = u.db.Save("users", jsonData)
+	if err != nil {
+		panic(err)
+	}
+
+	return err // TODO: replace this
 }
 
 func (u *UserRepository) ResetUser() error {

@@ -35,14 +35,22 @@ func (u *CartRepository) ReadCart() ([]model.Cart, error) {
 }
 
 func (u *CartRepository) UpdateCart(cart model.Cart) error {
+	res := []model.Cart{}
 	listCart, err := u.ReadCart()
 	if err != nil {
 		return err
 	}
 
-	return nil // TODO: replace this
+	for _, val := range listCart {
+		if val.Name == cart.Name {
+			res = append(res, cart)
+		} else {
+			res = append(res, val)
+		}
+	}
+	// TODO: replace this
 
-	jsonData, err := json.Marshal(listCart)
+	jsonData, err := json.Marshal(res)
 	if err != nil {
 		return err
 	}
@@ -52,11 +60,18 @@ func (u *CartRepository) UpdateCart(cart model.Cart) error {
 		return err
 	}
 
-	return nil
+	return err
 }
 
 func (u *CartRepository) AddCart(cart model.Cart) error {
-	return nil // TODO: replace this
+	var listCart []model.Cart
+	listCart = append(listCart, cart)
+	jsonData, err := json.Marshal(listCart)
+	if err != nil {
+		return err
+	}
+	err = u.db.Save("carts", jsonData)
+	return err // TODO: replace this
 }
 
 func (u *CartRepository) ResetCarts() error {
