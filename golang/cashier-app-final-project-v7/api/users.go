@@ -88,26 +88,13 @@ func (api *API) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	w.WriteHeader(http.StatusOK)
 	api.dashboardView(w, r)
 }
 
 func (api *API) Logout(w http.ResponseWriter, r *http.Request) {
 	//Read session_token and get Value:
 	storedCookie, _ := r.Cookie("session_token")
-	if storedCookie == nil {
-		e := model.ErrorResponse{}
-		code := 401
-		e.Error = "http: named cookie not present"
-		jsonInBytes, err := json.Marshal(e)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(code)
-		w.Write(jsonInBytes)
-		return
-	}
 	sessionToken := storedCookie.Value
 
 	api.sessionsRepo.DeleteSessions(sessionToken)
@@ -116,6 +103,7 @@ func (api *API) Logout(w http.ResponseWriter, r *http.Request) {
 	storedCookie.Name = "session_token"
 	storedCookie.Value = ""
 	storedCookie.Expires = time.Now()
+	http.SetCookie(w, storedCookie)
 
 	filepath := path.Join("views", "login.html")
 	tmpl, err := template.ParseFiles(filepath)

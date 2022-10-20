@@ -40,9 +40,7 @@ func (u *SessionsRepository) DeleteSessions(tokenTarget string) error {
 	// Select target token and delete from listSessions
 	for key, val := range listSessions {
 		if tokenTarget == val.Token {
-			copy(listSessions[key:], listSessions[key+1:])
-			listSessions[len(listSessions)-1] = model.Session{}
-			listSessions = listSessions[:len(listSessions)-1]
+			listSessions = RemoveIndex(listSessions, key)
 			break
 		}
 	}
@@ -61,8 +59,14 @@ func (u *SessionsRepository) DeleteSessions(tokenTarget string) error {
 	return err
 }
 
+func RemoveIndex(s []model.Session, index int) []model.Session {
+	ret := []model.Session{}
+	ret = append(ret, s[:index]...)
+	return append(ret, s[index+1:]...)
+}
+
 func (u *SessionsRepository) AddSessions(session model.Session) error {
-	listSessions := []model.Session{}
+	listSessions, _ := u.ReadSessions()
 	listSessions = append(listSessions, session)
 	jsonData, err := json.Marshal(listSessions)
 	if err != nil {

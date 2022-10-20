@@ -31,7 +31,7 @@ func (u *UserRepository) ReadUser() ([]model.Credentials, error) {
 }
 
 func (u *UserRepository) AddUser(creds model.Credentials) error {
-	listCreds := []model.Credentials{}
+	listCreds, _ := u.ReadUser()
 	listCreds = append(listCreds, creds)
 	jsonData, err := json.Marshal(listCreds)
 	if err != nil {

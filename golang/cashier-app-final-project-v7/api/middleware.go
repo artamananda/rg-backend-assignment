@@ -9,8 +9,8 @@ import (
 
 func (api *API) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		storedCookie, _ := r.Cookie("session_token")
-		if storedCookie == nil {
+		storedCookie, err := r.Cookie("session_token")
+		if err != nil {
 			e := model.ErrorResponse{}
 			code := 401
 			e.Error = "http: named cookie not present"
