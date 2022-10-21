@@ -2,24 +2,39 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Login User</title>
 </head>
 
 <body>
-    <h1>Login Page</h1>
-    <form method="post" action="/user/login">
-        <label>Username :</label>
-        <input type="text" placeholder="Type username here" name="username" required />
-        <br />
-
-        <label>Password :</label>
-        <input type="password" placeholder="Type password here" name="password" required />
-        <br />
-
-        <button type="submmit">Submit</button>
-    </form>
-
-    <a href="/page/register">Go to Register Page</a>
+    <section class="flex items-center justify-center h-screen">
+        <div class="w-full max-w-xs">
+            <h1 class="font-extrabold text-4xl text-blue-500 drop-shadow-md text-center">Login Page</h1>
+            <form method="post" action="/user/login" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                  Username
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="username" type="text" placeholder="Type username here" required>
+              </div>
+              <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                  Password
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="password" type="password" placeholder="Type password here" required>
+              </div>
+              <div class="flex items-center justify-between">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded my-5">Login</button>
+                <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="/page/register">Go to Register Page</a>
+              </div>
+            </form>
+            <p class="text-center text-gray-500 text-xs">
+              &copy;2022 Artamananda. All rights reserved.
+            </p>
+          </div>
+    </section>
 </body>
 
 </html>
