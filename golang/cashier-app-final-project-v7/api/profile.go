@@ -9,7 +9,7 @@ import (
 
 func (api *API) ImgProfileView(w http.ResponseWriter, r *http.Request) {
 	// View with response image `img-avatar.png` from path `assets/images`
-	fileBytes, err := ioutil.ReadFile("./assets/images/img-avatar.png")
+	fileBytes, err := ioutil.ReadFile("assets/images/img-avatar.png")
 	if err != nil {
 		panic(err)
 	}

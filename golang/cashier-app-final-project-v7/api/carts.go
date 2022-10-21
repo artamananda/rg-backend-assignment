@@ -16,8 +16,8 @@ func (api *API) AddCart(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	// Check r.Form with key product, if not found then return response code 400 and message "Request Product Not Found".
-	x := r.Form.Get("product")
-	if x == "" {
+	x := r.Form.Has("product")
+	if !x {
 		w.WriteHeader(400)
 		json.NewEncoder(w).Encode(model.ErrorResponse{Error: "Request Product Not Found"})
 		return
