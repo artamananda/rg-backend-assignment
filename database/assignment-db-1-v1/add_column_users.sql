@@ -1,0 +1,5 @@
+ALTER TABLE users ADD phone VARCHAR(50);
+ALTER TABLE users ADD address VARCHAR(255);
+ALTER TABLE users ADD department VARCHAR(255);
+ALTER TABLE users ADD division VARCHAR(255);
+ALTER TABLE users ADD position VARCHAR(255);
