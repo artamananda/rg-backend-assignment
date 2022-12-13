@@ -3,6 +3,7 @@ package repository
 import (
 	"a21hc3NpZ25tZW50/entity"
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -25,25 +26,53 @@ func NewCategoryRepository(db *gorm.DB) CategoryRepository {
 }
 
 func (r *categoryRepository) GetCategoriesByUserId(ctx context.Context, id int) ([]entity.Category, error) {
-	return nil, nil // TODO: replace this
+	results := []entity.Category{}
+	result := r.db.WithContext(ctx).Where("user_id = ?", id).Find(&results)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return []entity.Category{}, nil
+		}
+		return []entity.Category{}, result.Error
+	}
+	return results, nil // TODO: replace this
 }
 
 func (r *categoryRepository) StoreCategory(ctx context.Context, category *entity.Category) (categoryId int, err error) {
-	return 0, nil // TODO: replace this
+	result := r.db.WithContext(ctx).Create(&category)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return category.ID, nil // TODO: replace this
 }
 
 func (r *categoryRepository) StoreManyCategory(ctx context.Context, categories []entity.Category) error {
+	for _, val := range categories {
+		result := r.db.WithContext(ctx).Create(&val)
+		if result.Error != nil {
+			return result.Error
+		}
+	}
 	return nil // TODO: replace this
 }
 
 func (r *categoryRepository) GetCategoryByID(ctx context.Context, id int) (entity.Category, error) {
-	return entity.Category{}, nil // TODO: replace this
+	results := entity.Category{}
+	result := r.db.WithContext(ctx).First(&results, id)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return entity.Category{}, nil
+		}
+		return entity.Category{}, result.Error
+	}
+	return results, nil // TODO: replace this
 }
 
 func (r *categoryRepository) UpdateCategory(ctx context.Context, category *entity.Category) error {
-	return nil // TODO: replace this
+	result := r.db.WithContext(ctx).Updates(&category)
+	return result.Error // TODO: replace this
 }
 
 func (r *categoryRepository) DeleteCategory(ctx context.Context, id int) error {
-	return nil // TODO: replace this
+	result := r.db.WithContext(ctx).Delete(&entity.Category{}, id)
+	return result.Error // TODO: replace this
 }

@@ -40,7 +40,7 @@ func FlyURL() string {
 
 func main() {
 	//TODO: hapus jika sudah di deploy di fly.io
-	os.Setenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/test_db_camp")
+	os.Setenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/final_project_web_app")
 
 	wg := sync.WaitGroup{}
 
