@@ -3,7 +3,9 @@ package web
 import (
 	"a21hc3NpZ25tZW50/client"
 	"embed"
+	"html/template"
 	"net/http"
+	"path"
 )
 
 type ModifyWeb interface {
@@ -37,6 +39,19 @@ func (a *modifyWeb) AddTask(w http.ResponseWriter, r *http.Request) {
 	//
 
 	// TODO: answer here
+	var filepath = path.Join("views", "main", "add-task.html")
+	var header = path.Join("views", "general", "header.html")
+
+	var tmpl = template.Must(template.ParseFS(a.embed, filepath, header))
+	var dataTemplate = map[string]interface{}{
+		"catId": catId,
+	}
+
+	err := tmpl.Execute(w, dataTemplate)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (a *modifyWeb) AddTaskProcess(w http.ResponseWriter, r *http.Request) {
@@ -57,10 +72,25 @@ func (a *modifyWeb) AddTaskProcess(w http.ResponseWriter, r *http.Request) {
 	//
 
 	// TODO: answer here
+	if respCode == 201 {
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/task/add?category="+category, http.StatusSeeOther)
+	}
 }
 
 func (a *modifyWeb) AddCategory(w http.ResponseWriter, r *http.Request) {
 	// TODO: answer here
+	var filepath = path.Join("views", "main", "add-category.html")
+	var header = path.Join("views", "general", "header.html")
+
+	var tmpl = template.Must(template.ParseFS(a.embed, filepath, header))
+
+	err := tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (a *modifyWeb) AddCategoryProcess(w http.ResponseWriter, r *http.Request) {
@@ -79,6 +109,12 @@ func (a *modifyWeb) AddCategoryProcess(w http.ResponseWriter, r *http.Request) {
 	//
 
 	// TODO: answer here
+	if respCode == 201 {
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/category/add", http.StatusSeeOther)
+	}
+
 }
 
 func (a *modifyWeb) UpdateTask(w http.ResponseWriter, r *http.Request) {
@@ -95,6 +131,16 @@ func (a *modifyWeb) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	//
 
 	// TODO: answer here
+	var filepath = path.Join("views", "main", "update-task.html")
+	var header = path.Join("views", "general", "header.html")
+
+	var tmpl = template.Must(template.ParseFS(a.embed, filepath, header))
+
+	err = tmpl.Execute(w, task)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (a *modifyWeb) UpdateTaskProcess(w http.ResponseWriter, r *http.Request) {
@@ -138,6 +184,7 @@ func (a *modifyWeb) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: answer here
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
 func (a *modifyWeb) DeleteCategory(w http.ResponseWriter, r *http.Request) {
@@ -150,4 +197,5 @@ func (a *modifyWeb) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: answer here
+	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }

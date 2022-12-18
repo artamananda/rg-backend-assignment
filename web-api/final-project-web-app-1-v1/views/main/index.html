@@ -4,15 +4,12 @@
     {{template "general/header"}}
 </head>
 <body>
-    <div>
-        <h1>Welcome to kanban app</h1>
-        <a
-            href="/login"
-        >login</a>
-
-        <a
-            href="/register"
-        >Register</a>
-    </div>
+    <div class="mx-auto mt-10 w-full max-w-xs">
+        <h1 class="mb-5 text-center text-2xl font-bold">Welcome to kanban app</h1>
+        <div class="text-center">
+          <a class="focus:shadow-outline rounded bg-purple-500 py-2 px-4 mx-1 font-bold text-white shadow hover:bg-purple-400 focus:outline-none" href="/login">Login</a>
+          <a class="focus:shadow-outline rounded bg-purple-500 py-2 px-4 mx-1 font-bold text-white shadow hover:bg-purple-400 focus:outline-none" href="/register">Register</a>
+        </div>
+      </div>
 </body>
 </html>

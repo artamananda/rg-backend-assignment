@@ -11,7 +11,6 @@ import (
 	"embed"
 	"fmt"
 	"net/http"
-	"os"
 	"sync"
 
 	_ "github.com/lib/pq"
@@ -35,12 +34,12 @@ type ClientHandler struct {
 var Resources embed.FS
 
 func FlyURL() string {
-	return "" // TODO: replace this
+	return "https://artamananda-final-project-be2553146.fly.dev" // TODO: replace this
 }
 
 func main() {
 	//TODO: hapus jika sudah di deploy di fly.io
-	os.Setenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/final_project_web_app")
+	//os.Setenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/final_project_web_app")
 
 	wg := sync.WaitGroup{}
 

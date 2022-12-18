@@ -5,6 +5,7 @@ import (
 	"embed"
 	"log"
 	"net/http"
+	"path"
 	"text/template"
 )
 
@@ -50,4 +51,14 @@ func (d *dashboardWeb) Dashboard(w http.ResponseWriter, r *http.Request) {
 	//
 
 	// TODO: answer here
+	var filepath = path.Join("views", "main", "dashboard.html")
+	var header = path.Join("views", "general", "header.html")
+
+	var tmpl = template.Must(template.ParseFS(d.embed, filepath, header)).Funcs(funcMap)
+
+	err = tmpl.Execute(w, dataTemplate)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

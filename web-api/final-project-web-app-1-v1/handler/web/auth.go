@@ -4,7 +4,9 @@ import (
 	"a21hc3NpZ25tZW50/client"
 	"embed"
 	"fmt"
+	"html/template"
 	"net/http"
+	"path"
 )
 
 type AuthWeb interface {
@@ -26,6 +28,16 @@ func NewAuthWeb(userClient client.UserClient, embed embed.FS) *authWeb {
 
 func (a *authWeb) Login(w http.ResponseWriter, r *http.Request) {
 	// TODO: answer here
+	var filepath = path.Join("views", "auth", "login.html")
+	var header = path.Join("views", "general", "header.html")
+
+	var tmpl = template.Must(template.ParseFS(a.embed, filepath, header))
+
+	err := tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (a *authWeb) LoginProcess(w http.ResponseWriter, r *http.Request) {
@@ -55,6 +67,16 @@ func (a *authWeb) LoginProcess(w http.ResponseWriter, r *http.Request) {
 
 func (a *authWeb) Register(w http.ResponseWriter, r *http.Request) {
 	// TODO: answer here
+	var filepath = path.Join("views", "auth", "register.html")
+	var header = path.Join("views", "general", "header.html")
+
+	var tmpl = template.Must(template.ParseFS(a.embed, filepath, header))
+
+	err := tmpl.Execute(w, nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (a *authWeb) RegisterProcess(w http.ResponseWriter, r *http.Request) {
@@ -85,4 +107,13 @@ func (a *authWeb) RegisterProcess(w http.ResponseWriter, r *http.Request) {
 
 func (a *authWeb) Logout(w http.ResponseWriter, r *http.Request) {
 	// TODO: answer here
+	http.SetCookie(w, &http.Cookie{
+		Name:   "user_id",
+		Value:  "",
+		Path:   "/",
+		MaxAge: 0,
+		Domain: "",
+	})
+
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
